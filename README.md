@@ -1,3 +1,3 @@
-# games_tracker_1
+# games_tracker
 
 A new Flutter project.
