@@ -4,6 +4,7 @@ class Game {
   final String name;
   final String releaseDate;
   final String description;
+  final double averageScore;
 
   Game({
     this.id,
@@ -11,6 +12,7 @@ class Game {
     required this.name,
     required this.releaseDate,
     required this.description,
+    required this.averageScore,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +22,7 @@ class Game {
       'name': name,
       'release_date': releaseDate,
       'description': description,
+      'average_score': averageScore,
     };
   }
 
@@ -30,6 +33,7 @@ class Game {
       name: map['name'] as String,
       releaseDate: map['release_date'] as String,
       description: map['description'] as String,
+      averageScore: map['average_score'] as double,
     );
   }
 }
