@@ -1,6 +1,6 @@
 {
-    "name": "games_tracker",
-    "short_name": "games_tracker",
+    "name": "games_tracker_1",
+    "short_name": "games_tracker_1",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

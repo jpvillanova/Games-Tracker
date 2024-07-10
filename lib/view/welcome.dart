@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({super.key});
+class Welcome extends StatelessWidget {
+  const Welcome({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class WelcomeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/dashboard');
+                Navigator.pushNamed(context, '/home');
               },
               child: const Text('Entrar sem Cadastro'),
             ),
