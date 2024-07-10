@@ -1,4 +1,4 @@
-import 'package:login_app/helper/DatabaseHelper.dart';
+import 'package:login_app/helper/database_helper.dart';
 
 import '../model/user.dart';
 
@@ -17,19 +17,19 @@ class LoginController {
     return res;
   }
 
-  Future<User> getLogin(String username, String password) async {
+  Future<User> getLogin(String email, String password) async {
     var db = await con.db;
     String sql = """
-    SELECT * FROM user WHERE username = '${username}' AND password = '${password}' 
+    SELECT * FROM user WHERE email = '$email' AND password = '$password' 
 """;
 
     var res = await db.rawQuery(sql);
 
-    if (res.length > 0) {
+    if (res.isNotEmpty) {
       return User.fromMap(res.first);
     }
 
-    return User(id: -1, username: "", password: "");
+    return User(id: -1, name: "", email: "", password: "");
   }
 
   Future<List<User>> getAllUser() async {
@@ -43,8 +43,8 @@ class LoginController {
     return list;
   }
 
-  Future<int> registerUser(String username, String password) async {
-    User newUser = User(username: username, password: password);
+  Future<int> registerUser(String name, String email, String password) async {
+    User newUser = User(name: name, email: email, password: password);
     return await saveUser(newUser);
   }
 }

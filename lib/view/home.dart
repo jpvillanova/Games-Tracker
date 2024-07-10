@@ -15,9 +15,8 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.user != null
-            ? "Welcome, ${widget.user!.username}"
-            : "Welcome"),
+        title: Text(
+            widget.user != null ? "Welcome, ${widget.user!.name}" : "Welcome"),
         actions: <Widget>[
           IconButton(
             onPressed: () => Auth.signOut().then((_) {

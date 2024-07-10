@@ -10,17 +10,18 @@ class Register extends StatefulWidget {
 }
 
 class RegisterState extends State<Register> {
-  // Renamed to make it public
-  final _usernameController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final LoginController _controller = LoginController();
 
   void _register() async {
     int result = await _controller.registerUser(
-      _usernameController.text,
+      _nameController.text,
+      _emailController.text,
       _passwordController.text,
     );
-    if (!mounted) return; // Check if the widget is still mounted
+    if (!mounted) return;
     if (result != -1) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('User registered successfully!')),
@@ -41,8 +42,12 @@ class RegisterState extends State<Register> {
         child: Column(
           children: <Widget>[
             TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'Username'),
+              controller: _nameController,
+              decoration: const InputDecoration(labelText: 'Name'),
+            ),
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
             TextField(
               controller: _passwordController,

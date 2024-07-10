@@ -13,7 +13,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
-  String _username = "", _password = "";
+  String _email = "", _password = "";
   late LoginController controller;
   int? value; // Declare 'value' as an integer that can be null
 
@@ -38,9 +38,9 @@ class _LoginState extends State<Login> {
       form.save();
 
       try {
-        User user = await controller.getLogin(_username, _password);
+        User user = await controller.getLogin(_email, _password);
         if (user.id != -1) {
-          savePref(1, user.username, user.password);
+          savePref(1, user.name, user.password);
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => Home(user: user)));
         } else {
@@ -92,9 +92,9 @@ class _LoginState extends State<Login> {
             child: Column(
               children: [
                 TextFormField(
-                  onSaved: (newVal) => _username = newVal!,
+                  onSaved: (newVal) => _email = newVal!,
                   decoration: const InputDecoration(
-                    labelText: "Username",
+                    labelText: "Email",
                     border: OutlineInputBorder(),
                   ),
                 ),

@@ -2,7 +2,6 @@ import 'package:sqflite/sqflite.dart'; // Ensure this import is correctly placed
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'dart:io' as io;
-import "../model/user.dart";
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper.internal();
@@ -27,7 +26,8 @@ class DatabaseHelper {
       String sql = """
         CREATE TABLE user( 
           id INTEGER PRIMARY KEY AUTOINCREMENT, 
-          username VARCHAR, 
+          name VARCHAR, 
+          email VARCHAR,
           password VARCHAR
         );""";
       await db.execute(sql);
