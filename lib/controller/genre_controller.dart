@@ -68,4 +68,12 @@ class GenreController {
     }
     return null;
   }
+
+  Future<List<Genre>> getGenres() async {
+    var db = await con.db;
+    List<Map> maps = await db.query('genre');
+    return List.generate(maps.length, (i) {
+      return Genre.fromMap(maps[i] as Map<String, dynamic>);
+    });
+  }
 }

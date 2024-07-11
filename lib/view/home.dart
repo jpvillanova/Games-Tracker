@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login_app/controller/genre_controller.dart';
+import 'package:login_app/model/genre.dart';
 import 'package:login_app/view/review.dart';
 import '../controller/game_controller.dart';
 import '../model/game.dart';
@@ -28,10 +29,24 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
   String _gameReleaseDate = '';
   String _gameDescription = '';
 
+  List<Genre> _genres = []; // Lista para armazenar os gêneros
+  Genre? _selectedGenre; // Gênero selecionado
+
   @override
   void initState() {
     super.initState();
-    _fetchGames(); // Carrega os jogos quando o widget é inicializado
+    _fetchGames();
+    _fetchGenres(); // Carrega os gêneros quando o widget é inicializado
+  }
+
+  void _fetchGenres() async {
+    var genres =
+        await _genreController.getGenres(); // Supõe que existe esse método
+    print(genres);
+    print('UUUUUUUUUUUUUUUUUUUUUUUUUU');
+    setState(() {
+      _genres = genres;
+    });
   }
 
   @override
@@ -80,9 +95,18 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
             ),
           ),
           if (widget.user != null)
-            ElevatedButton(
-              onPressed: _createGame,
-              child: const Text('Create Game'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: _createGame,
+                  child: const Text('Create Game'),
+                ),
+                ElevatedButton(
+                  onPressed: _createGenre, // Add this button for creating genre
+                  child: const Text('Create Genre'),
+                ),
+              ],
             ),
           Expanded(
             child: ListView.builder(
@@ -136,10 +160,6 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   void _createGame() async {
-    TextEditingController textController =
-        TextEditingController(); // Controlador para o gênero
-    GenreController genreController = GenreController();
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -166,12 +186,22 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                   ),
                   onChanged: (value) => _gameDescription = value,
                 ),
-                TextFormField(
-                  controller:
-                      textController, // Controlador para capturar o nome do gênero
+                DropdownButtonFormField<Genre>(
+                  value: _selectedGenre,
                   decoration: const InputDecoration(
                     labelText: 'Genre',
                   ),
+                  onChanged: (Genre? newValue) {
+                    setState(() {
+                      _selectedGenre = newValue;
+                    });
+                  },
+                  items: _genres.map<DropdownMenuItem<Genre>>((Genre genre) {
+                    return DropdownMenuItem<Genre>(
+                      value: genre,
+                      child: Text(genre.name),
+                    );
+                  }).toList(),
                 ),
               ],
             ),
@@ -186,14 +216,10 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
             TextButton(
               child: const Text('Create'),
               onPressed: () async {
-                // Passa o texto do controlador para o método getOrCreateGenreId
-                int genreId = await genreController
-                    .getOrCreateGenreId(textController.text);
-                print(
-                    "Genre ID: $genreId"); // Adiciona a impressão do genreId aqui
-                await _saveGameToDatabase(
-                    genreId); // Modifica esta função para aceitar genreId
-                Navigator.of(context).pop();
+                if (_selectedGenre != null) {
+                  await _saveGameToDatabase(_selectedGenre!.id!);
+                  Navigator.of(context).pop();
+                }
               },
             ),
           ],
@@ -268,9 +294,20 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                   controller: descriptionController,
                   decoration: const InputDecoration(labelText: 'Description'),
                 ),
-                TextFormField(
-                  controller: genreController,
+                DropdownButtonFormField<Genre>(
+                  value: _selectedGenre,
                   decoration: const InputDecoration(labelText: 'Genre'),
+                  onChanged: (Genre? newValue) {
+                    setState(() {
+                      _selectedGenre = newValue;
+                    });
+                  },
+                  items: _genres.map<DropdownMenuItem<Genre>>((Genre genre) {
+                    return DropdownMenuItem<Genre>(
+                      value: genre,
+                      child: Text(genre.name),
+                    );
+                  }).toList(),
                 ),
               ],
             ),
@@ -306,5 +343,47 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
   void _deleteGame(Game game) async {
     await _gameController.deleteGame(game);
     _fetchGames();
+  }
+
+  void _createGenre() async {
+    TextEditingController genreNameController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Create New Genre'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                TextFormField(
+                  controller: genreNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Genre Name',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Create'),
+              onPressed: () async {
+                Genre newGenre = Genre(name: genreNameController.text);
+                await _genreController.createGenre(newGenre);
+                _fetchGenres(); // Fetch genres after creating a new one
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
