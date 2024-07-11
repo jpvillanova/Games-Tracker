@@ -5,28 +5,20 @@ import 'package:login_app/model/genre.dart';
 class GenreController {
   DatabaseHelper con = DatabaseHelper();
 
-  Future<int> createOrUpdateGameGenre(GameGenre gameGenre) async {
+  Future<int> updateGameGenreAssociation(int gameId, int newGenreId) async {
     var db = await con.db;
-    // Check if the game_genre association already exists
-    List<Map> existing = await db.query('game_genre',
-        where: 'game_id = ? AND genre_id = ?',
-        whereArgs: [gameGenre.gameId, gameGenre.genreId]);
-
-    if (existing.isNotEmpty) {
-      // Update existing game_genre association
-      return await db.update('game_genre', gameGenre.toMap(),
-          where: 'game_id = ? AND genre_id = ?',
-          whereArgs: [gameGenre.gameId, gameGenre.genreId]);
-    } else {
-      // Create new game_genre association
-      return await db.insert('game_genre', gameGenre.toMap());
-    }
+    int result = await db.update(
+        'game_genre', {'genre_id': newGenreId}, // Atualiza apenas o genre_id
+        where: 'game_id = ?',
+        whereArgs: [gameId]); // Filtra apenas pelo game_id
+    print('Resultado da atualização: $result');
+    return result;
   }
 
-  Future<void> createOrUpdateGameGenreAssociation(
-      int gameId, int genreId) async {
+  Future<void> createGameGenreAssociation(int gameId, int genreId) async {
+    var db = await con.db;
     GameGenre gameGenre = GameGenre(gameId: gameId, genreId: genreId);
-    await createOrUpdateGameGenre(gameGenre);
+    await db.insert('game_genre', gameGenre.toMap());
   }
 
   Future<int> createGenre(Genre genre) async {
@@ -46,6 +38,18 @@ class GenreController {
       // Creates a new genre and returns the ID
       int newId = await createGenre(Genre(name: genreName));
       return newId;
+    }
+  }
+
+  Future<int> getGenreId(String genreName) async {
+    var db = await con.db;
+    List<Map> maps = await db.query('genre',
+        columns: ['id'], where: 'name = ?', whereArgs: [genreName]);
+
+    if (maps.isNotEmpty) {
+      return maps.first['id'] as int; // Returns the existing ID if not null
+    } else {
+      return -1;
     }
   }
 

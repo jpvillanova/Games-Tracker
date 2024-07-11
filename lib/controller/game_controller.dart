@@ -34,6 +34,10 @@ class GameController {
 
   Future<List<Game>> getFilteredGames(
       {String? releaseDate, int? genreId, double? averageScore}) async {
+    if (genreId == -1) {
+      return []; // Return an empty list if genreId is -1
+    }
+
     var db = await con.db;
     List<String> whereClauses = [];
     List<dynamic> whereArgs = [];
@@ -44,13 +48,14 @@ class GameController {
       LEFT JOIN review r ON g.id = r.game_id
     ''';
 
-    // Adicione condições conforme necessário e verifique os valores
+    // Add conditions as needed and validate the values
     if (releaseDate != null) {
       whereClauses.add('g.release_date = ?');
       whereArgs.add(releaseDate);
     }
     if (genreId != null) {
-      whereClauses.add('g.genre_id = ?');
+      whereClauses
+          .add('g.id IN (SELECT game_id FROM game_genre WHERE genre_id = ?)');
       whereArgs.add(genreId);
     }
     if (averageScore != null) {
