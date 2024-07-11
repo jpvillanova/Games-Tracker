@@ -5,8 +5,7 @@ class Register extends StatefulWidget {
   const Register({super.key});
 
   @override
-  RegisterState createState() =>
-      RegisterState(); // Updated to use the new public class name
+  RegisterState createState() => RegisterState();
 }
 
 class RegisterState extends State<Register> {

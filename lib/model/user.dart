@@ -2,21 +2,21 @@ import 'dart:convert';
 
 class User {
   final int? id;
-  final String name; // Changed from username to name
-  final String email; // Added email field
+  final String name;
+  final String email;
   final String password;
 
   User(
       {this.id,
       required this.name,
       required this.email,
-      required this.password}); // Updated constructor
+      required this.password});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       "id": id,
-      "name": name, // Changed from username to name
-      "email": email, // Added email to map
+      "name": name,
+      "email": email,
       "password": password
     };
   }
@@ -24,8 +24,8 @@ class User {
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
         id: map["id"],
-        name: map["name"] as String, // Changed from username to name
-        email: map["email"] as String, // Added email
+        name: map["name"] as String,
+        email: map["email"] as String,
         password: map["password"] as String);
   }
 

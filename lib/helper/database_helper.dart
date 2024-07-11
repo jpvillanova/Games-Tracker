@@ -47,6 +47,7 @@ class DatabaseHelper {
         name VARCHAR NOT NULL UNIQUE,
         description TEXT NOT NULL,
         release_date VARCHAR NOT NULL,
+        average_score REAL NOT NULL,
         FOREIGN KEY(user_id) REFERENCES user(id)
       );
     """);

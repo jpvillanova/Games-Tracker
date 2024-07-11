@@ -15,7 +15,7 @@ class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   String _email = "", _password = "";
   late LoginController controller;
-  int? value; // Declare 'value' as an integer that can be null
+  int? value;
 
   _LoginState() {
     controller = LoginController();

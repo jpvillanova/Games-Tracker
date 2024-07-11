@@ -1,9 +1,9 @@
 class Game {
   final int? id;
   final int userId;
-  final String name;
-  final String releaseDate;
-  final String description;
+  String name;
+  String releaseDate;
+  String description;
   final double averageScore;
 
   Game({
@@ -33,7 +33,7 @@ class Game {
       name: map['name'] as String,
       releaseDate: map['release_date'] as String,
       description: map['description'] as String,
-      averageScore: map['average_score'] as double,
+      averageScore: (map['average_score'] as num).toDouble(),
     );
   }
 }
