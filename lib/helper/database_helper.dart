@@ -68,7 +68,7 @@ class DatabaseHelper {
         description TEXT NOT NULL,
         date VARCHAR NOT NULL,
         FOREIGN KEY(user_id) REFERENCES user(id),
-        FOREIGN KEY(game_id) REFERENCES game(id)
+        FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE
       );
     """);
   }

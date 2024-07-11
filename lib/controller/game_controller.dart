@@ -33,7 +33,7 @@ class GameController {
   }
 
   Future<List<Game>> getFilteredGames(
-      {String? releaseDate, int? genreId, double? minScore}) async {
+      {String? releaseDate, int? genreId, double? averageScore}) async {
     var db = await con.db;
     List<String> whereClauses = [];
     List<dynamic> whereArgs = [];
@@ -53,9 +53,9 @@ class GameController {
       whereClauses.add('g.genre_id = ?');
       whereArgs.add(genreId);
     }
-    if (minScore != null) {
-      whereClauses.add('r.score >= ?');
-      whereArgs.add(minScore);
+    if (averageScore != null) {
+      whereClauses.add('average_score >= ?');
+      whereArgs.add(averageScore);
     }
 
     if (whereClauses.isNotEmpty) {
@@ -66,9 +66,14 @@ class GameController {
 
     final List<Map<String, dynamic>> result = await db.rawQuery(sql, whereArgs);
     List<Game> games = result.map((gameMap) => Game.fromMap(gameMap)).toList();
-    print('AAAAAAAAAAAAAAAAAAA');
-    print(
-        "Fetched games: ${games.length}"); // Depuração para verificar a contagem de jogos
     return games;
+  }
+
+  Future<List<Game>> getUserGames(int userId) async {
+    var db = await con.db;
+    var res = await db.query("game", where: "user_id = ?", whereArgs: [userId]);
+    List<Game> list =
+        res.isNotEmpty ? res.map((c) => Game.fromMap(c)).toList() : [];
+    return list;
   }
 }

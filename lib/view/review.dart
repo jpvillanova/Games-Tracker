@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:login_app/model/user.dart';
 import '../model/game.dart';
 import '../model/review.dart';
-import '../controller/game_controller.dart';
 import '../controller/review_controller.dart';
 import 'package:intl/intl.dart'; // Adicione esta importação para formatar datas
 
@@ -19,7 +18,6 @@ class GameDetailsScreen extends StatefulWidget {
 
 class _GameDetailsScreenState extends State<GameDetailsScreen> {
   List<Review> reviews = [];
-  final GameController _gameController = GameController();
   final ReviewController _reviewController =
       ReviewController(); // Add this line
 
@@ -32,8 +30,8 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
   void _fetchReviews() async {
     if (widget.game.id != null) {
       try {
-        List<Review> fetchedReviews =
-            await _reviewController.fetchReviewsByGameId(widget.game.id!);
+        List<Review> fetchedReviews = await _reviewController
+            .fetchRecentReviewsByGameId(widget.game.id!, 7);
         setState(() {
           reviews = fetchedReviews;
         });
@@ -132,23 +130,51 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
         title: Text(widget.game.name),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: reviews.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(reviews[index].description),
-                  subtitle: Text("Score: ${reviews[index].score}"),
-                );
-              },
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Release Date: ${widget.game.releaseDate}",
+                    style: TextStyle(fontSize: 16)),
+                Text("Description: ${widget.game.description}",
+                    style: TextStyle(fontSize: 16)),
+              ],
             ),
           ),
-          // Verifica se o usuário está logado antes de mostrar o botão
+          // Mostra todos os reviews
+          if (reviews.length > 0)
+            Expanded(
+              child: ListView.builder(
+                itemCount: reviews.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    child: ListTile(
+                      title: Text(reviews[index].description),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Score: ${reviews[index].score}"),
+                          Text("Date: ${reviews[index].date}"),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          // Botão 'Add Review' em uma nova linha
           if (widget.user != null)
-            ElevatedButton(
-              onPressed: _addReview,
-              child: Text('Add Review'),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Center(
+                child: ElevatedButton(
+                  onPressed: _addReview,
+                  child: Text('Add Review'),
+                ),
+              ),
             ),
         ],
       ),

@@ -23,7 +23,7 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
   List<Game> _games = [];
   String? _releaseDate;
   int? _genreId;
-  double? _minScore;
+  double? _averageScore; // Replace _minScore with _averageScore
 
   String _gameName = '';
   String _gameReleaseDate = '';
@@ -42,8 +42,6 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
   void _fetchGenres() async {
     var genres =
         await _genreController.getGenres(); // Supõe que existe esse método
-    print(genres);
-    print('UUUUUUUUUUUUUUUUUUUUUUUUUU');
     setState(() {
       _genres = genres;
     });
@@ -51,6 +49,9 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    List<Game> userGames =
+        _games.where((game) => game.userId == widget.user?.id).toList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -66,6 +67,7 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
       ),
       body: Column(
         children: <Widget>[
+          // Aqui você pode exibir os cards apenas dos jogos do usuário
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
@@ -89,9 +91,10 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
               decoration: const InputDecoration(
-                labelText: 'Minimum Score',
+                labelText: 'Average Score',
               ),
-              onChanged: (value) => _minScore = double.tryParse(value),
+              onChanged: (value) => _averageScore = double.tryParse(
+                  value), // Replace _minScore with _averageScore
             ),
           ),
           if (widget.user != null)
@@ -106,54 +109,112 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                   onPressed: _createGenre, // Add this button for creating genre
                   child: const Text('Create Genre'),
                 ),
+                ElevatedButton(
+                  onPressed: _searchGames,
+                  child: const Text('Search'),
+                ),
               ],
             ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _games.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  child: ListTile(
-                    title: Text(_games[index].name),
-                    subtitle: Text(
-                        "Average Score: ${_games[index].averageScore.toStringAsFixed(1)}"),
-                    trailing: widget.user != null
-                        ? Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: () {
-                                  _editGame(_games[index]);
-                                },
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () {
-                                  _deleteGame(_games[index]);
-                                },
-                              ),
-                            ],
-                          )
-                        : null,
-                    onTap: () async {
-                      // Mark this function as async
-                      var result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => GameDetailsScreen(
-                              game: _games[index], user: widget.user),
-                        ),
-                      );
-                      if (result == true) {
-                        _fetchGames();
-                      }
-                    },
-                  ),
-                );
-              },
+          if (widget.user == null) // Show search button only if user is null
+            ElevatedButton(
+              onPressed: _searchGames,
+              child: const Text('Search'),
             ),
-          ),
+          if (_releaseDate == null &&
+              _genreId == null &&
+              _averageScore == null) // Replace _minScore with _averageScore
+            for (var game in userGames) // Change _games to userGames
+              Card(
+                child: ListTile(
+                  title: Text(game.name),
+                  subtitle: Text(
+                      "Average Score: ${game.averageScore.toStringAsFixed(1)}"),
+                  trailing: widget.user != null &&
+                          game.userId ==
+                              widget.user
+                                  ?.id // Check if the game belongs to the user
+                      ? Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            IconButton(
+                              icon: const Icon(Icons.edit),
+                              onPressed: () {
+                                _editGame(game);
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                _deleteGame(game);
+                              },
+                            ),
+                          ],
+                        )
+                      : null,
+                  onTap: () async {
+                    var result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            GameDetailsScreen(game: game, user: widget.user),
+                      ),
+                    );
+                    if (result == true) {
+                      _fetchGames();
+                    }
+                  },
+                ),
+              ),
+          if (_releaseDate != null ||
+              _genreId != null ||
+              _averageScore != null) // Replace _minScore with _averageScore
+            Expanded(
+              child: ListView.builder(
+                itemCount: _games.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    child: ListTile(
+                      title: Text(_games[index].name),
+                      subtitle: Text(
+                          "Average Score: ${_games[index].averageScore.toStringAsFixed(1)}"),
+                      trailing: widget.user != null &&
+                              _games[index].userId == widget.user?.id
+                          ? Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () {
+                                    _editGame(_games[index]);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    _deleteGame(_games[index]);
+                                  },
+                                ),
+                              ],
+                            )
+                          : null,
+                      onTap: () async {
+                        // Mark this function as async
+                        var result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => GameDetailsScreen(
+                                game: _games[index], user: widget.user),
+                          ),
+                        );
+                        if (result == true) {
+                          _fetchGames();
+                        }
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
         ],
       ),
     );
@@ -245,7 +306,7 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
     var games = await _gameController.getFilteredGames(
       releaseDate: _releaseDate,
       genreId: _genreId,
-      minScore: _minScore,
+      averageScore: _averageScore, // Replace _minScore with _averageScore
     );
     setState(() {
       _games = games;
@@ -385,5 +446,9 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
         );
       },
     );
+  }
+
+  void _searchGames() {
+    _fetchGames(); // Fetch games based on filters
   }
 }

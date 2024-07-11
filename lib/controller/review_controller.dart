@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:login_app/helper/database_helper.dart';
 import '../model/review.dart';
 
@@ -43,6 +44,21 @@ class ReviewController {
       'review',
       where: 'game_id = ?',
       whereArgs: [gameId],
+    );
+    return List.generate(maps.length, (i) {
+      return Review.fromMap(maps[i]);
+    });
+  }
+
+  Future<List<Review>> fetchRecentReviewsByGameId(int gameId, int days) async {
+    var db = await _dbHelper.db;
+    var now = DateTime.now();
+    var sevenDaysAgo = now.subtract(Duration(days: days));
+    List<Map<String, dynamic>> maps = await db.query(
+      'review',
+      where: 'game_id = ? AND date >= ?',
+      whereArgs: [gameId, DateFormat('yyyy-MM-dd').format(sevenDaysAgo)],
+      orderBy: 'date DESC',
     );
     return List.generate(maps.length, (i) {
       return Review.fromMap(maps[i]);
