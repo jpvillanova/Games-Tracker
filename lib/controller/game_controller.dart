@@ -58,8 +58,10 @@ class GameController {
           .add('g.id IN (SELECT game_id FROM game_genre WHERE genre_id = ?)');
       whereArgs.add(genreId);
     }
+    print(averageScore);
+    print('TESTE ACIMA');
     if (averageScore != null) {
-      whereClauses.add('average_score >= ?');
+      whereClauses.add('g.average_score = ?');
       whereArgs.add(averageScore);
     }
 
@@ -70,6 +72,12 @@ class GameController {
     sql += ' GROUP BY g.id';
 
     final List<Map<String, dynamic>> result = await db.rawQuery(sql, whereArgs);
+
+    // Adicionando impressão para debugar os resultados
+    print("SQL Query: $sql");
+    print("SQL Args: $whereArgs");
+    print("Raw Results: $result");
+
     List<Game> games = result.map((gameMap) => Game.fromMap(gameMap)).toList();
     return games;
   }

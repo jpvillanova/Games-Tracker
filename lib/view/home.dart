@@ -159,12 +159,17 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                     var result = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            GameDetailsScreen(game: game, user: widget.user),
+                        builder: (context) => GameDetailsScreen(
+                            game: game,
+                            user: widget.user,
+                            onReviewAdded: () {
+                              _fetchGames(); // Atualiza a lista de jogos
+                            }),
                       ),
                     );
                     if (result == true) {
-                      _fetchGames();
+                      _fetchGames(); // Atualiza a lista de jogos
+                      print('Atualização necessária após review');
                     }
                   },
                 ),
@@ -209,7 +214,11 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                           context,
                           MaterialPageRoute(
                             builder: (context) => GameDetailsScreen(
-                                game: _games[index], user: widget.user),
+                                game: _games[index],
+                                user: widget.user,
+                                onReviewAdded: () {
+                                  _fetchGames();
+                                }),
                           ),
                         );
                         if (result == true) {
@@ -313,9 +322,7 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
   void _fetchGames() async {
     int? genreId;
     if (_filterGenreName != null) {
-      print('aaaassasasa');
       genreId = await _genreController.getGenreId(_filterGenreName!);
-      print(genreId);
     } else {
       genreId = null;
     }
@@ -326,6 +333,7 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
       averageScore:
           _filterAverageScore, // Replace _minScore with _filterAverageScore
     );
+
     setState(() {
       _games = games;
     });

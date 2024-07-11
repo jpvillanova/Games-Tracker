@@ -8,8 +8,13 @@ import 'package:intl/intl.dart'; // Adicione esta importação para formatar dat
 class GameDetailsScreen extends StatefulWidget {
   final Game game;
   final User? user; // Adicione este parâmetro para passar o usuário logado
+  final VoidCallback onReviewAdded; // Adicione este parâmetro para o callback
 
-  const GameDetailsScreen({Key? key, required this.game, required this.user})
+  const GameDetailsScreen(
+      {Key? key,
+      required this.game,
+      required this.user,
+      required this.onReviewAdded})
       : super(key: key);
 
   @override
@@ -95,9 +100,10 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                     );
                     int result = await _reviewController.addReview(newReview);
                     if (result != -1) {
-                      Navigator.of(context)
-                          .pop(true); // Indica que uma atualização é necessária
+                      widget.onReviewAdded(); // Chama o callback
+                      Navigator.of(context).pop(); // Fecha a tela
                       _fetchReviews(); // Recarrega os reviews após adicionar um novo
+                      print('alouas');
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Failed to add review')),

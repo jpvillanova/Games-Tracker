@@ -31,6 +31,9 @@ class ReviewController {
     double newAverageScore =
         (avgQuery.first['average_score'] as num).toDouble();
 
+    // Arredondando para uma casa decimal
+    newAverageScore = double.parse(newAverageScore.toStringAsFixed(1));
+
     // Imprime o novo average score calculado
     print('New average score for game ID $gameId: $newAverageScore');
 
