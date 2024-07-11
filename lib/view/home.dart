@@ -18,19 +18,18 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> with WidgetsBindingObserver {
   final GameController _gameController = GameController();
-  final GenreController _genreController =
-      GenreController(); // Define _genreController here
+  final GenreController _genreController = GenreController();
   List<Game> _games = [];
   String? _filterReleaseDate;
-  String? _filterGenreName; // Add _filterGenreName variable
-  double? _filterAverageScore; // Replace _minScore with _filterAverageScore
+  String? _filterGenreName;
+  double? _filterAverageScore;
 
   String _gameName = '';
   String _gameReleaseDate = '';
   String _gameDescription = '';
 
-  List<Genre> _genres = []; // Lista para armazenar os gêneros
-  Genre? _selectedGenre; // Gênero selecionado
+  List<Genre> _genres = [];
+  Genre? _selectedGenre;
 
   @override
   void initState() {
@@ -53,8 +52,9 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-            widget.user != null ? "Welcome, ${widget.user!.name}" : "Welcome"),
+        title: Text(widget.user != null
+            ? "Bem-vindo, ${widget.user!.name}"
+            : "Bem-vindo"),
         actions: <Widget>[
           IconButton(
             onPressed: () => Auth.signOut().then((_) {
@@ -66,13 +66,12 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
       ),
       body: Column(
         children: <Widget>[
-          // Aqui você pode exibir os cards apenas dos jogos do usuário
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
               decoration: const InputDecoration(
-                labelText: 'Release Date',
-                hintText: 'YYYY-MM-DD',
+                labelText: 'Data de Lançamento',
+                hintText: 'AAAA-MM-DD',
               ),
               onChanged: (value) =>
                   _filterReleaseDate = value.isEmpty ? null : value,
@@ -82,21 +81,20 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
               decoration: const InputDecoration(
-                labelText: 'Genre Name',
+                labelText: 'Nome do Gênero',
               ),
-              onChanged: (value) => _filterGenreName = value.isEmpty
-                  ? null
-                  : value, // Update the onChanged method for Genre Name TextFormField to set _filterGenreName
+              onChanged: (value) =>
+                  _filterGenreName = value.isEmpty ? null : value,
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
               decoration: const InputDecoration(
-                labelText: 'Average Score',
+                labelText: 'Pontuação Média',
               ),
-              onChanged: (value) => _filterAverageScore = double.tryParse(
-                  value), // Replace _minScore with _filterAverageScore
+              onChanged: (value) =>
+                  _filterAverageScore = double.tryParse(value),
             ),
           ),
           if (widget.user != null)
@@ -105,56 +103,52 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
               children: [
                 ElevatedButton(
                   onPressed: _createGame,
-                  child: const Text('Create Game'),
-                ),
-                ElevatedButton(
-                  onPressed: _createGenre, // Add this button for creating genre
-                  child: const Text('Create Genre'),
+                  child: const Text('Criar Jogo'),
                 ),
                 ElevatedButton(
                   onPressed: _searchGames,
-                  child: const Text('Search'),
+                  child: const Text('Buscar'),
+                ),
+                ElevatedButton(
+                  onPressed: _createGenre,
+                  child: const Text('Criar Gênero'),
                 ),
               ],
             ),
-          if (widget.user == null) // Show search button only if user is null
+          if (widget.user == null)
             ElevatedButton(
               onPressed: _searchGames,
-              child: const Text('Search'),
+              child: const Text('Buscar'),
             ),
           if (_filterReleaseDate == null &&
-              _filterGenreName ==
-                  null && // Replace _genreId with _filterGenreName
-              _filterAverageScore ==
-                  null) // Replace _minScore with _filterAverageScore
-            for (var game in userGames) // Change _games to userGames
+              _filterGenreName == null &&
+              _filterAverageScore == null)
+            for (var game in userGames)
               Card(
                 child: ListTile(
                   title: Text(game.name),
                   subtitle: Text(
-                      "Average Score: ${game.averageScore.toStringAsFixed(1)}"),
-                  trailing: widget.user != null &&
-                          game.userId ==
-                              widget.user
-                                  ?.id // Check if the game belongs to the user
-                      ? Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            IconButton(
-                              icon: const Icon(Icons.edit),
-                              onPressed: () {
-                                _editGame(game);
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () {
-                                _deleteGame(game);
-                              },
-                            ),
-                          ],
-                        )
-                      : null,
+                      "Pontuação Média: ${game.averageScore.toStringAsFixed(1)}"),
+                  trailing:
+                      widget.user != null && game.userId == widget.user?.id
+                          ? Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () {
+                                    _editGame(game);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    _deleteGame(game);
+                                  },
+                                ),
+                              ],
+                            )
+                          : null,
                   onTap: () async {
                     var result = await Navigator.push(
                       context,
@@ -163,22 +157,19 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                             game: game,
                             user: widget.user,
                             onReviewAdded: () {
-                              _fetchGames(); // Atualiza a lista de jogos
+                              _fetchGames();
                             }),
                       ),
                     );
                     if (result == true) {
-                      _fetchGames(); // Atualiza a lista de jogos
-                      print('Atualização necessária após review');
+                      _fetchGames();
                     }
                   },
                 ),
               ),
           if (_filterReleaseDate != null ||
-              _filterGenreName !=
-                  null || // Replace _genreId with _filterGenreName
-              _filterAverageScore !=
-                  null) // Replace _minScore with _filterAverageScore
+              _filterGenreName != null ||
+              _filterAverageScore != null)
             Expanded(
               child: ListView.builder(
                 itemCount: _games.length,
@@ -187,7 +178,7 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                     child: ListTile(
                       title: Text(_games[index].name),
                       subtitle: Text(
-                          "Average Score: ${_games[index].averageScore.toStringAsFixed(1)}"),
+                          "Pontuação Média: ${_games[index].averageScore.toStringAsFixed(1)}"),
                       trailing: widget.user != null &&
                               _games[index].userId == widget.user?.id
                           ? Row(
@@ -209,7 +200,6 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                             )
                           : null,
                       onTap: () async {
-                        // Mark this function as async
                         var result = await Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -240,32 +230,32 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Create New Game'),
+          title: const Text('Criar Novo Jogo'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 TextFormField(
                   decoration: const InputDecoration(
-                    labelText: 'Game Name',
+                    labelText: 'Nome do Jogo',
                   ),
                   onChanged: (value) => _gameName = value,
                 ),
                 TextFormField(
                   decoration: const InputDecoration(
-                    labelText: 'Release Date (YYYY-MM-DD)',
+                    labelText: 'Data de Lançamento (AAAA-MM-DD)',
                   ),
                   onChanged: (value) => _gameReleaseDate = value,
                 ),
                 TextFormField(
                   decoration: const InputDecoration(
-                    labelText: 'Description',
+                    labelText: 'Descrição',
                   ),
                   onChanged: (value) => _gameDescription = value,
                 ),
                 DropdownButtonFormField<Genre>(
                   value: _selectedGenre,
                   decoration: const InputDecoration(
-                    labelText: 'Genre',
+                    labelText: 'Gênero',
                   ),
                   onChanged: (Genre? newValue) {
                     setState(() {
@@ -278,7 +268,6 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                       child: Text(genre.name),
                     );
                   }).toList(),
-                  // Add this line to constrain the width of the dropdown
                   isExpanded: true,
                 ),
               ],
@@ -286,13 +275,13 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancel'),
+              child: const Text('Cancelar'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Create'),
+              child: const Text('Criar'),
               onPressed: () async {
                 if (_selectedGenre != null) {
                   await _saveGameToDatabase(_selectedGenre!.id!);
@@ -329,19 +318,13 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
 
     var games = await _gameController.getFilteredGames(
       releaseDate: _filterReleaseDate,
-      genreId: genreId, // Replace _genreId with _filterGenreName
-      averageScore:
-          _filterAverageScore, // Replace _minScore with _filterAverageScore
+      genreId: genreId,
+      averageScore: _filterAverageScore,
     );
 
     setState(() {
       _games = games;
     });
-
-    // Adicionando impressão de debug para cada jogo
-    // for (var game in _games) {
-    //   print('Game: ${game.name}, Average Score: ${game.averageScore}');
-    // }
   }
 
   void _editGame(Game game) async {
@@ -351,45 +334,35 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
         TextEditingController(text: game.releaseDate);
     TextEditingController descriptionController =
         TextEditingController(text: game.description);
-    TextEditingController genreController =
-        TextEditingController(); // Controlador para o gênero
     GenreController genreCtrl = GenreController();
 
-    // Carrega o nome do gênero do banco de dados
     String? genreName = await genreCtrl.getGenreNameByGameId(game.id!);
     _selectedGenre = _genres.firstWhere((genre) => genre.name == genreName);
-    // print(genreName);
-    // print('WWwwwwwwwwwwwwwwwwwwwwwwwwwwwWWW');
-    // genreController.text =
-    //     genreName ?? ""; // Define o nome do gênero no controlador
-    // print(genreController.text);
-    // print('WWwwwwwwwwwwwwwwwwwwwwwwwwwwwWWW');
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Edit Game'),
+          title: const Text('Editar Jogo'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 TextFormField(
                   controller: nameController,
-                  decoration: const InputDecoration(labelText: 'Game Name'),
+                  decoration: const InputDecoration(labelText: 'Nome do Jogo'),
                 ),
                 TextFormField(
                   controller: releaseDateController,
                   decoration: const InputDecoration(
-                      labelText: 'Release Date (YYYY-MM-DD)'),
+                      labelText: 'Data de Lançamento (AAAA-MM-DD)'),
                 ),
                 TextFormField(
                   controller: descriptionController,
-                  decoration: const InputDecoration(labelText: 'Description'),
+                  decoration: const InputDecoration(labelText: 'Descrição'),
                 ),
                 DropdownButtonFormField<Genre>(
-                  value: _selectedGenre ??
-                      _genres.firstWhere((genre) => genre.name == genreName),
-                  decoration: const InputDecoration(labelText: 'Genre'),
+                  value: _selectedGenre,
+                  decoration: const InputDecoration(labelText: 'Gênero'),
                   onChanged: (Genre? newValue) {
                     setState(() {
                       _selectedGenre = newValue;
@@ -401,7 +374,6 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
                       child: Text(genre.name),
                     );
                   }).toList(),
-                  // Add this line to constrain the width of the dropdown
                   isExpanded: true,
                 ),
               ],
@@ -409,16 +381,14 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancel'),
+              child: const Text('Cancelar'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Save Changes'),
+              child: const Text('Salvar Alterações'),
               onPressed: () async {
-                print(_selectedGenre!.name);
-                print('AAAAAAAAAAAAAAAAAAAAAAAA');
                 int genreId =
                     await genreCtrl.getOrCreateGenreId(_selectedGenre!.name);
                 game.name = nameController.text;
@@ -449,14 +419,14 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Create New Genre'),
+          title: const Text('Criar Novo Gênero'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 TextFormField(
                   controller: genreNameController,
                   decoration: const InputDecoration(
-                    labelText: 'Genre Name',
+                    labelText: 'Nome do Gênero',
                   ),
                 ),
               ],
@@ -464,17 +434,17 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancel'),
+              child: const Text('Cancelar'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Create'),
+              child: const Text('Criar'),
               onPressed: () async {
                 Genre newGenre = Genre(name: genreNameController.text);
                 await _genreController.createGenre(newGenre);
-                _fetchGenres(); // Fetch genres after creating a new one
+                _fetchGenres();
                 Navigator.of(context).pop();
               },
             ),
@@ -485,10 +455,6 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
   }
 
   void _searchGames() {
-    print('Esse é o relaseDate: $_filterReleaseDate');
-    print(
-        'Esse é o genreName: $_filterGenreName'); // Replace _genreId with _filterGenreName
-    print('Esse é o averageScore: $_filterAverageScore');
-    _fetchGames(); // Fetch games based on filters
+    _fetchGames();
   }
 }

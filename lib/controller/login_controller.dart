@@ -1,5 +1,4 @@
 import 'package:login_app/helper/database_helper.dart';
-
 import '../model/user.dart';
 
 class LoginController {

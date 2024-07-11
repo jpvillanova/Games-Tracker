@@ -5,7 +5,6 @@ class GameController {
   DatabaseHelper con = DatabaseHelper();
 
   Future<int> createGame(Game game) async {
-    // Renamed from saveGame to createGame
     var db = await con.db;
     int res = await db.insert('game', game.toMap());
     return res;
@@ -35,7 +34,7 @@ class GameController {
   Future<List<Game>> getFilteredGames(
       {String? releaseDate, int? genreId, double? averageScore}) async {
     if (genreId == -1) {
-      return []; // Return an empty list if genreId is -1
+      return [];
     }
 
     var db = await con.db;
@@ -48,7 +47,6 @@ class GameController {
       LEFT JOIN review r ON g.id = r.game_id
     ''';
 
-    // Add conditions as needed and validate the values
     if (releaseDate != null) {
       whereClauses.add('g.release_date = ?');
       whereArgs.add(releaseDate);
@@ -58,8 +56,6 @@ class GameController {
           .add('g.id IN (SELECT game_id FROM game_genre WHERE genre_id = ?)');
       whereArgs.add(genreId);
     }
-    print(averageScore);
-    print('TESTE ACIMA');
     if (averageScore != null) {
       whereClauses.add('g.average_score = ?');
       whereArgs.add(averageScore);
@@ -72,11 +68,6 @@ class GameController {
     sql += ' GROUP BY g.id';
 
     final List<Map<String, dynamic>> result = await db.rawQuery(sql, whereArgs);
-
-    // Adicionando impressão para debugar os resultados
-    print("SQL Query: $sql");
-    print("SQL Args: $whereArgs");
-    print("Raw Results: $result");
 
     List<Game> games = result.map((gameMap) => Game.fromMap(gameMap)).toList();
     return games;

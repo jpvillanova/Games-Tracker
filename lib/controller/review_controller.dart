@@ -10,12 +10,11 @@ class ReviewController {
     try {
       int result = await db.insert('review', review.toMap());
       if (result != -1) {
-        // Atualiza a pontuação média do jogo
         await _updateGameAverageScore(review.gameId);
       }
       return result;
     } catch (e) {
-      print('Error adding review: $e');
+      print('Erro ao adicionar o review: $e');
       return -1;
     }
   }
@@ -31,11 +30,7 @@ class ReviewController {
     double newAverageScore =
         (avgQuery.first['average_score'] as num).toDouble();
 
-    // Arredondando para uma casa decimal
     newAverageScore = double.parse(newAverageScore.toStringAsFixed(1));
-
-    // Imprime o novo average score calculado
-    print('New average score for game ID $gameId: $newAverageScore');
 
     await db.update('game', {'average_score': newAverageScore},
         where: 'id = ?', whereArgs: [gameId]);

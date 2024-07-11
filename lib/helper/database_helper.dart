@@ -19,7 +19,6 @@ class DatabaseHelper {
     final io.Directory appDocumentsDir =
         await getApplicationDocumentsDirectory();
     String path = p.join(appDocumentsDir.path, "games_tracker.db");
-    print("Database Path: $path");
 
     Database db = await openDatabase(path, version: 1, onCreate: _createDb);
     return db;

@@ -7,11 +7,8 @@ class GenreController {
 
   Future<int> updateGameGenreAssociation(int gameId, int newGenreId) async {
     var db = await con.db;
-    int result = await db.update(
-        'game_genre', {'genre_id': newGenreId}, // Atualiza apenas o genre_id
-        where: 'game_id = ?',
-        whereArgs: [gameId]); // Filtra apenas pelo game_id
-    print('Resultado da atualização: $result');
+    int result = await db.update('game_genre', {'genre_id': newGenreId},
+        where: 'game_id = ?', whereArgs: [gameId]);
     return result;
   }
 
@@ -33,9 +30,8 @@ class GenreController {
         columns: ['id'], where: 'name = ?', whereArgs: [genreName]);
 
     if (maps.isNotEmpty) {
-      return maps.first['id']; // Returns the existing ID
+      return maps.first['id'];
     } else {
-      // Creates a new genre and returns the ID
       int newId = await createGenre(Genre(name: genreName));
       return newId;
     }
@@ -47,7 +43,7 @@ class GenreController {
         columns: ['id'], where: 'name = ?', whereArgs: [genreName]);
 
     if (maps.isNotEmpty) {
-      return maps.first['id'] as int; // Returns the existing ID if not null
+      return maps.first['id'];
     } else {
       return -1;
     }

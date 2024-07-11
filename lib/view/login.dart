@@ -45,7 +45,7 @@ class _LoginState extends State<Login> {
               MaterialPageRoute(builder: (context) => Home(user: user)));
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('User not registered!')),
+            const SnackBar(content: Text('Usuário não registrado!')),
           );
         }
       } catch (e) {
@@ -103,12 +103,12 @@ class _LoginState extends State<Login> {
                   child: TextFormField(
                     onSaved: (newVal) => _password = newVal!,
                     decoration: const InputDecoration(
-                      labelText: "Password",
+                      labelText: "Senha",
                       border: OutlineInputBorder(),
                     ),
                   ),
                 ),
-                ElevatedButton(onPressed: _submit, child: const Text("Login"))
+                ElevatedButton(onPressed: _submit, child: const Text("Entrar"))
               ],
             ),
           ),

@@ -23,11 +23,11 @@ class RegisterState extends State<Register> {
     if (!mounted) return;
     if (result != -1) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('User registered successfully!')),
+        const SnackBar(content: Text('Usuário registrado com sucesso!')),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to register user')),
+        const SnackBar(content: Text('Falha ao registrar usuário')),
       );
     }
   }
@@ -35,14 +35,14 @@ class RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Register")),
+      appBar: AppBar(title: const Text("Registrar")),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: <Widget>[
             TextField(
               controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Name'),
+              decoration: const InputDecoration(labelText: 'Nome'),
             ),
             TextField(
               controller: _emailController,
@@ -50,12 +50,12 @@ class RegisterState extends State<Register> {
             ),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
+              decoration: const InputDecoration(labelText: 'Senha'),
               obscureText: true,
             ),
             ElevatedButton(
               onPressed: _register,
-              child: const Text('Register'),
+              child: const Text('Registrar'),
             ),
           ],
         ),

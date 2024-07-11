@@ -3,12 +3,12 @@ import 'package:login_app/model/user.dart';
 import '../model/game.dart';
 import '../model/review.dart';
 import '../controller/review_controller.dart';
-import 'package:intl/intl.dart'; // Adicione esta importação para formatar datas
+import 'package:intl/intl.dart';
 
 class GameDetailsScreen extends StatefulWidget {
   final Game game;
-  final User? user; // Adicione este parâmetro para passar o usuário logado
-  final VoidCallback onReviewAdded; // Adicione este parâmetro para o callback
+  final User? user;
+  final VoidCallback onReviewAdded;
 
   const GameDetailsScreen(
       {Key? key,
@@ -23,8 +23,7 @@ class GameDetailsScreen extends StatefulWidget {
 
 class _GameDetailsScreenState extends State<GameDetailsScreen> {
   List<Review> reviews = [];
-  final ReviewController _reviewController =
-      ReviewController(); // Add this line
+  final ReviewController _reviewController = ReviewController();
 
   @override
   void initState() {
@@ -41,15 +40,14 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
           reviews = fetchedReviews;
         });
       } catch (e) {
-        print("Failed to fetch reviews: $e");
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to fetch reviews from database')),
+          SnackBar(
+              content: Text('Falha ao buscar avaliações do banco de dados')),
         );
       }
     } else {
-      print("Game ID is null");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Game ID is null')),
+        SnackBar(content: Text('ID do jogo é nulo')),
       );
     }
   }
@@ -62,17 +60,17 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Add Review'),
+          title: Text('Adicionar Avaliação'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 TextFormField(
                   controller: _descriptionController,
-                  decoration: InputDecoration(labelText: 'Description'),
+                  decoration: InputDecoration(labelText: 'Descrição'),
                 ),
                 TextFormField(
                   controller: _scoreController,
-                  decoration: InputDecoration(labelText: 'Score (0-10)'),
+                  decoration: InputDecoration(labelText: 'Nota (0-10)'),
                   keyboardType: TextInputType.number,
                 ),
               ],
@@ -80,13 +78,13 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: Text('Cancelar'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Add'),
+              child: Text('Adicionar'),
               onPressed: () async {
                 final double? score = double.tryParse(_scoreController.text);
                 if (score != null && score >= 0 && score <= 10) {
@@ -100,25 +98,25 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                     );
                     int result = await _reviewController.addReview(newReview);
                     if (result != -1) {
-                      widget.onReviewAdded(); // Chama o callback
-                      Navigator.of(context).pop(); // Fecha a tela
-                      _fetchReviews(); // Recarrega os reviews após adicionar um novo
-                      print('alouas');
+                      widget.onReviewAdded();
+                      Navigator.of(context).pop();
+                      _fetchReviews();
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Failed to add review')),
+                        SnackBar(content: Text('Falha ao adicionar avaliação')),
                       );
                     }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('User ID or Game ID is null')),
+                      SnackBar(
+                          content: Text('ID do usuário ou do jogo é nulo')),
                     );
                   }
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                         content: Text(
-                            'Please enter a valid score between 0 and 10')),
+                            'Por favor, insira uma nota válida entre 0 e 10')),
                   );
                 }
               },
@@ -143,14 +141,13 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Release Date: ${widget.game.releaseDate}",
+                Text("Data de Lançamento: ${widget.game.releaseDate}",
                     style: TextStyle(fontSize: 16)),
-                Text("Description: ${widget.game.description}",
+                Text("Descrição: ${widget.game.description}",
                     style: TextStyle(fontSize: 16)),
               ],
             ),
           ),
-          // Mostra todos os reviews
           if (reviews.length > 0)
             Expanded(
               child: ListView.builder(
@@ -162,8 +159,8 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Score: ${reviews[index].score}"),
-                          Text("Date: ${reviews[index].date}"),
+                          Text("Nota: ${reviews[index].score}"),
+                          Text("Data: ${reviews[index].date}"),
                         ],
                       ),
                     ),
@@ -171,14 +168,13 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                 },
               ),
             ),
-          // Botão 'Add Review' em uma nova linha
           if (widget.user != null)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Center(
                 child: ElevatedButton(
                   onPressed: _addReview,
-                  child: Text('Add Review'),
+                  child: Text('Adicionar Avaliação'),
                 ),
               ),
             ),
